@@ -6,6 +6,29 @@ A premium, multi-page weather app built with pure **HTML, CSS, and JavaScript** 
 
 ---
 
+## Preview
+
+<table>
+  <tr>
+    <td width="50%" align="center"><b>🏠 Home — Current Weather</b></td>
+    <td width="50%" align="center"><b>📈 Forecast — 7-Day + Hourly</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="preview/home-delhi.png" alt="Home page showing current weather for Delhi" /></td>
+    <td width="50%"><img src="preview/forecast.png" alt="Forecast page showing 7-day temperature chart" /></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><b>📍 Maps — Saved Cities</b></td>
+    <td width="50%" align="center"><b>⚙️ Settings — Units & Theme</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="preview/maps.png" alt="Maps page showing saved cities grid" /></td>
+    <td width="50%"><img src="preview/settings.png" alt="Settings page showing unit toggles and theme" /></td>
+  </tr>
+</table>
+
+---
+
 ## ✨ Features
 
 ### 4 Pages (SPA with hash router)
@@ -29,12 +52,14 @@ A premium, multi-page weather app built with pure **HTML, CSS, and JavaScript** 
 - **Shimmer skeleton** loader while fetching
 - **Live autocomplete** — debounced city search with keyboard nav (↑/↓/Enter/Esc)
 - **Ripple effect** on buttons, **pulse** on LIVE indicator, **heartbeat** on credit
+- **Keyboard shortcut** — press `/` to focus search bar
+- **Refresh button** — re-fetch weather with a click
 
 ### Data
 - **Open-Meteo API** (free, no key) — geocoding + forecast + air quality
-- Current: temperature, feels-like, humidity, wind, pressure, UV, precipitation, is_day
+- Current: temperature, feels-like, humidity, wind + direction, pressure, UV, precipitation, is_day
 - Hourly: 24-hour temperature + weather code + precipitation probability
-- Daily: 7-day forecast, sunrise/sunset, UV index, precipitation sum
+- Daily: 7-day forecast, sunrise/sunset + day length, UV index, precipitation sum
 - Air quality: PM2.5, PM10, US AQI
 
 ---
@@ -58,11 +83,18 @@ Then open <http://localhost:8000>.
 
 ```
 weather-app/
-├── index.html    # 287 lines — single shell, 4 page sections, bottom nav
-├── style.css     # 657 lines — glassmorphism + all animations
-├── app.js        # 845 lines — SPA router + API client + interactions
-├── README.md     # This file
-└── SETUP.md      # Detailed setup + customization + deployment
+├── index.html       # SPA shell, 4 page sections, bottom nav
+├── style.css        # Glassmorphism + all animations
+├── app.js           # SPA router + API client + interactions
+├── preview/         # Screenshots for README
+│   ├── home-delhi.png
+│   ├── home-tokyo.png
+│   ├── forecast.png
+│   ├── maps.png
+│   └── settings.png
+├── README.md        # This file (with embedded previews)
+├── SETUP.md         # Detailed setup + customization + deployment
+└── .gitignore
 ```
 
 ---
@@ -70,15 +102,16 @@ weather-app/
 ## Pages
 
 ### Home (`#/`)
-- Animated search bar with live autocomplete
+- Animated search bar with live autocomplete (press `/` to focus)
 - Hero card: city, count-up temperature, animated icon, condition, feels-like
-- 4 stat cards: humidity, wind (with compass), pressure, UV index
+- 4 stat cards: humidity, wind (with compass + cardinal direction), pressure, UV index
 - 24-hour horizontal scroll strip
-- Sun arc SVG (sunrise → current → sunset)
+- Sun arc SVG (sunrise → current → sunset + day length)
 - Air quality card (PM2.5, PM10, AQI badge)
+- Refresh button (↻) to re-fetch weather
 
 ### Forecast (`#/forecast`)
-- Animated SVG temperature line chart (7 days)
+- Animated SVG temperature line chart (7 days, stroke-dashoffset draw)
 - Precipitation probability bar chart
 - Expandable day rows with hourly detail
 
@@ -92,7 +125,7 @@ weather-app/
 ### Settings (`#/settings`)
 - Units: °C/°F, km/h vs mph, hPa vs mmHg
 - Theme: Auto (day/night) / Dark / Light
-- About + credit
+- About + credit "Made by Sudais Alam"
 - Clear saved cities
 
 ---
