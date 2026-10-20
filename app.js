@@ -367,6 +367,18 @@
   searchClear.addEventListener("click", () => {
     searchInput.value = ""; searchClear.hidden = true; hideResults(); searchInput.focus();
   });
+
+  // Keyboard shortcut: press "/" to focus search (like GitHub, Google)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== searchInput) {
+      const tag = document.activeElement?.tagName;
+      if (tag !== "INPUT" && tag !== "TEXTAREA") {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+      }
+    }
+  });
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".search-wrap")) hideResults();
   });
@@ -429,7 +441,9 @@
   }
 
   /* ---------------- Load weather orchestration ---------------- */
+  let lastLoc = null;
   async function loadWeather(loc) {
+    lastLoc = loc;
     showSkeleton(true);
     try {
       const [data, air] = await Promise.all([getForecast(loc.lat, loc.lon), getAir(loc.lat, loc.lon)]);
@@ -439,11 +453,20 @@
       if (currentRoute() === "/forecast") renderForecast();
     } catch (e) {
       console.error(e);
-      toast("Couldn't load weather. Check connection.");
+      toast("Couldn't load weather. Tap refresh to retry.");
     } finally {
       showSkeleton(false);
     }
   }
+  // Refresh button: re-fetch the last city
+  window.refreshWeather = () => {
+    if (lastLoc) {
+      toast("Refreshing…");
+      loadWeather(lastLoc);
+    } else {
+      toast("Search a city first.");
+    }
+  };
 
   function showSkeleton(on) {
     const sk = $("#skeletonWrap");
@@ -484,6 +507,10 @@
     $$('[data-unit="speed"]').forEach(n => n.textContent = conv.windSym());
     const needle = $("#compassNeedle");
     if (needle) needle.style.transform = `rotate(${c.wind_direction_10m}deg)`;
+    // Show cardinal direction (N, NE, E, ...) next to wind speed
+    const cardinals = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+    const dirEl = $("#windDir");
+    if (dirEl) dirEl.textContent = cardinals[Math.round(c.wind_direction_10m / 22.5) % 16];
 
     countUp($("#statPressure"), conv.press(c.surface_pressure));
     $$('[data-unit="pressure"]').forEach(n => n.textContent = conv.pressSym());
@@ -552,6 +579,12 @@
     const fill = $("#sunArcFill");
     const totalLen = 460;
     fill.style.strokeDashoffset = totalLen - (totalLen * t);
+    // Show day length (duration between sunrise and sunset)
+    const dayLenMs = sunset - sunrise;
+    const hours = Math.floor(dayLenMs / 3600000);
+    const mins = Math.floor((dayLenMs % 3600000) / 60000);
+    const dayLenEl = $("#dayLength");
+    if (dayLenEl) dayLenEl.textContent = `${hours}h ${mins}m`;
   }
   function quadBezier(p0, p1, p2, t) {
     const mt = 1 - t;

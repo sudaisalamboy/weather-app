@@ -80,6 +80,7 @@
           </div>
           <div class="hero-meta" id="heroMeta">
             <span id="heroTime">Updated —</span>
+            <button class="refresh-btn" onclick="refreshWeather()" aria-label="Refresh weather" title="Refresh">↻</button>
           </div>
         </article>
 
@@ -92,7 +93,7 @@
           </article>
           <article class="card stat-card" data-anim="fade-up" style="--i:2">
             <div class="stat-head"><span class="stat-ic" aria-hidden="true">🌬️</span>Wind</div>
-            <div class="stat-val"><span id="statWind" class="count-up">0</span> <span class="unit" data-unit="speed">km/h</span></div>
+            <div class="stat-val"><span id="statWind" class="count-up">0</span> <span class="unit" data-unit="speed">km/h</span> <span id="windDir" class="wind-dir">N</span></div>
             <div class="compass" aria-hidden="true">
               <svg viewBox="0 0 100 100" class="compass-svg">
                 <circle cx="50" cy="50" r="46" class="compass-ring"/>
@@ -141,6 +142,7 @@
             </svg>
             <div class="sun-times">
               <div><span class="sun-label">Sunrise</span><span class="sun-val" id="sunrise">—</span></div>
+              <div><span class="sun-label">Day length</span><span class="sun-val" id="dayLength">—</span></div>
               <div><span class="sun-label">Sunset</span><span class="sun-val" id="sunset">—</span></div>
             </div>
           </div>

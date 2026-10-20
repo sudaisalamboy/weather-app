@@ -655,3 +655,13 @@ img, svg { display: block; max-width: 100%; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .bg-gradient { animation: none; }
 }
+.wind-dir { font-size: 0.85rem; color: var(--accent, #38bdf8); font-weight: 600; margin-left: 4px; }
+.refresh-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; margin-left: 8px;
+  border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08); color: var(--text, #fff);
+  font-size: 1rem; cursor: pointer; transition: transform 0.3s, background 0.2s;
+}
+.refresh-btn:hover { background: rgba(255,255,255,0.15); transform: rotate(180deg); }
+.refresh-btn:active { transform: rotate(360deg); }
