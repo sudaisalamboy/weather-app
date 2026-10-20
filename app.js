@@ -408,6 +408,9 @@
              <span class="res-sub">${escapeHtml([r.region, r.country].filter(Boolean).join(", "))}</span></span>
            </li>`).join("");
         $$(".search-results li").forEach(li => {
+          // Prevent mousedown from stealing focus from the input (race condition
+          // where the input's blur fires before click, causing stale autocomplete)
+          li.addEventListener("mousedown", (e) => e.preventDefault());
           li.addEventListener("click", () => {
             const r = lastResults[+li.dataset.i];
             selectCity(r);
@@ -430,7 +433,10 @@
     save("aurora.current", c);
     searchInput.value = "";
     searchClear.hidden = true;
+    lastResults = [];          // clear stale autocomplete results
+    activeIdx = -1;
     hideResults();
+    searchInput.blur();        // remove focus so autocomplete doesn't reappear
     toast(`Loading ${c.name}…`);
     loadWeather(c);
     location.hash = "#/";
