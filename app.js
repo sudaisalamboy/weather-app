@@ -556,6 +556,12 @@
     const fill = $("#sunArcFill");
     const totalLen = 460;
     fill.style.strokeDashoffset = totalLen - (totalLen * t);
+    // Show day length (duration between sunrise and sunset)
+    const dayLenMs = sunset - sunrise;
+    const hours = Math.floor(dayLenMs / 3600000);
+    const mins = Math.floor((dayLenMs % 3600000) / 60000);
+    const dayLenEl = $("#dayLength");
+    if (dayLenEl) dayLenEl.textContent = `${hours}h ${mins}m`;
   }
   function quadBezier(p0, p1, p2, t) {
     const mt = 1 - t;
