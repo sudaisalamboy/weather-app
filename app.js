@@ -484,6 +484,10 @@
     $$('[data-unit="speed"]').forEach(n => n.textContent = conv.windSym());
     const needle = $("#compassNeedle");
     if (needle) needle.style.transform = `rotate(${c.wind_direction_10m}deg)`;
+    // Show cardinal direction (N, NE, E, ...) next to wind speed
+    const cardinals = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+    const dirEl = $("#windDir");
+    if (dirEl) dirEl.textContent = cardinals[Math.round(c.wind_direction_10m / 22.5) % 16];
 
     countUp($("#statPressure"), conv.press(c.surface_pressure));
     $$('[data-unit="pressure"]').forEach(n => n.textContent = conv.pressSym());
