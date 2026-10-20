@@ -163,3 +163,8 @@ MIT — free to use, modify, and distribute.
 - **v2.0** — Aurora redesign: glassmorphism, 4 pages, animations
 - **v2.1** — Wind cardinal direction, day length, keyboard shortcut, refresh button
 - **v2.2** — Search input clear fix, preview images
+
+## Community
+Thanks to all contributors who help improve Aurora Weather!
+
+Made by Sudais Alam
