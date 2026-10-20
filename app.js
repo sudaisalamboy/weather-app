@@ -441,7 +441,9 @@
   }
 
   /* ---------------- Load weather orchestration ---------------- */
+  let lastLoc = null;
   async function loadWeather(loc) {
+    lastLoc = loc;
     showSkeleton(true);
     try {
       const [data, air] = await Promise.all([getForecast(loc.lat, loc.lon), getAir(loc.lat, loc.lon)]);
@@ -451,11 +453,20 @@
       if (currentRoute() === "/forecast") renderForecast();
     } catch (e) {
       console.error(e);
-      toast("Couldn't load weather. Check connection.");
+      toast("Couldn't load weather. Tap refresh to retry.");
     } finally {
       showSkeleton(false);
     }
   }
+  // Refresh button: re-fetch the last city
+  window.refreshWeather = () => {
+    if (lastLoc) {
+      toast("Refreshing…");
+      loadWeather(lastLoc);
+    } else {
+      toast("Search a city first.");
+    }
+  };
 
   function showSkeleton(on) {
     const sk = $("#skeletonWrap");
