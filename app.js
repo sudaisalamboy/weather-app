@@ -367,6 +367,18 @@
   searchClear.addEventListener("click", () => {
     searchInput.value = ""; searchClear.hidden = true; hideResults(); searchInput.focus();
   });
+
+  // Keyboard shortcut: press "/" to focus search (like GitHub, Google)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== searchInput) {
+      const tag = document.activeElement?.tagName;
+      if (tag !== "INPUT" && tag !== "TEXTAREA") {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+      }
+    }
+  });
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".search-wrap")) hideResults();
   });
