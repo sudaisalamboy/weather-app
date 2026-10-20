@@ -3,78 +3,283 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weather Checker — by Sudais Alam</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="description" content="Aurora Weather — premium glassmorphism weather app with animated forecasts, maps, and air quality." />
+  <meta name="theme-color" content="#0b0f1a" />
+  <title>Aurora Weather</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='28' fill='%23ffb347'/%3E%3C/svg%3E" />
 </head>
 <body>
+  <!-- Animated weather-aware gradient background -->
+  <div class="bg-gradient" id="bgGradient" aria-hidden="true"></div>
+  <div class="bg-noise" aria-hidden="true"></div>
+  <!-- Particle overlay layer (rain/snow) -->
+  <canvas class="particles" id="particles" aria-hidden="true"></canvas>
+
   <div class="app">
-    <header>
-      <h1>Weather Checker</h1>
-      <p class="subtitle">Real-time weather for any city in the world</p>
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <span class="brand-sun"></span>
+        </span>
+        <div class="brand-text">
+          <h1 class="brand-name">Aurora</h1>
+          <span class="live-indicator" id="liveIndicator" aria-label="Live data">
+            <span class="live-dot"></span>LIVE
+          </span>
+        </div>
+      </div>
+
+      <div class="search-wrap" role="search">
+        <div class="search-box" id="searchBox">
+          <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input
+            id="searchInput"
+            class="search-input"
+            type="search"
+            inputmode="search"
+            autocomplete="off"
+            placeholder="Search a city…"
+            aria-label="Search for a city"
+            aria-autocomplete="list"
+            aria-controls="searchResults"
+            aria-expanded="false"
+          />
+          <button class="search-clear" id="searchClear" aria-label="Clear search" hidden>&times;</button>
+          <span class="search-glow" aria-hidden="true"></span>
+        </div>
+        <ul id="searchResults" class="search-results" role="listbox" aria-label="City suggestions" hidden></ul>
+      </div>
     </header>
 
-    <form id="search-form">
-      <input
-        type="text"
-        id="city-input"
-        placeholder="Search a city (e.g. London, Tokyo, Delhi)…"
-        autocomplete="off"
-        autofocus
-      />
-      <button type="submit" aria-label="Search weather">Search</button>
-    </form>
+    <!-- ============ MAIN PAGES ============ -->
+    <main id="view" class="view" aria-live="polite">
 
-    <div id="suggestions" class="suggestions hidden"></div>
+      <!-- ===== HOME ===== -->
+      <section class="page" id="page-home" data-route="/" aria-label="Home">
+        <!-- Hero -->
+        <article class="card hero-card" data-anim="fade-up" style="--i:0">
+          <div class="hero-top">
+            <div class="hero-loc">
+              <svg viewBox="0 0 24 24" class="loc-pin" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg>
+              <div>
+                <h2 class="hero-city" id="heroCity">—</h2>
+                <p class="hero-country" id="heroCountry">Search a city to begin</p>
+              </div>
+            </div>
+            <div class="hero-icon" id="heroIcon" aria-hidden="true"></div>
+          </div>
+          <div class="hero-main">
+            <div class="hero-temp"><span id="heroTemp" class="count-up">0</span><span class="deg" id="heroDeg">°</span></div>
+            <div class="hero-cond" id="heroCond">—</div>
+            <div class="hero-feels">Feels like <span id="heroFeels">—</span></div>
+          </div>
+          <div class="hero-meta" id="heroMeta">
+            <span id="heroTime">Updated —</span>
+          </div>
+        </article>
 
-    <div id="weather-card" class="weather-card hidden" role="status" aria-live="polite">
-      <div class="card-top">
-        <div class="location">
-          <h2 id="city-name">—</h2>
-          <p id="country">—</p>
+        <!-- Quick stats -->
+        <div class="stats-grid">
+          <article class="card stat-card" data-anim="fade-up" style="--i:1">
+            <div class="stat-head"><span class="stat-ic" aria-hidden="true">💧</span>Humidity</div>
+            <div class="stat-val"><span id="statHumidity" class="count-up">0</span>%</div>
+            <div class="stat-bar"><i id="barHumidity"></i></div>
+          </article>
+          <article class="card stat-card" data-anim="fade-up" style="--i:2">
+            <div class="stat-head"><span class="stat-ic" aria-hidden="true">🌬️</span>Wind</div>
+            <div class="stat-val"><span id="statWind" class="count-up">0</span> <span class="unit" data-unit="speed">km/h</span></div>
+            <div class="compass" aria-hidden="true">
+              <svg viewBox="0 0 100 100" class="compass-svg">
+                <circle cx="50" cy="50" r="46" class="compass-ring"/>
+                <text x="50" y="16" text-anchor="middle" class="compass-tick">N</text>
+                <text x="84" y="54" text-anchor="middle" class="compass-tick">E</text>
+                <text x="50" y="92" text-anchor="middle" class="compass-tick">S</text>
+                <text x="16" y="54" text-anchor="middle" class="compass-tick">W</text>
+                <g id="compassNeedle" class="compass-needle">
+                  <polygon points="50,18 45,52 55,52" class="needle-n"/>
+                  <polygon points="50,82 45,52 55,52" class="needle-s"/>
+                </g>
+              </svg>
+            </div>
+          </article>
+          <article class="card stat-card" data-anim="fade-up" style="--i:3">
+            <div class="stat-head"><span class="stat-ic" aria-hidden="true">🧭</span>Pressure</div>
+            <div class="stat-val"><span id="statPressure" class="count-up">0</span> <span class="unit" data-unit="pressure">hPa</span></div>
+            <div class="stat-bar"><i id="barPressure"></i></div>
+          </article>
+          <article class="card stat-card" data-anim="fade-up" style="--i:4">
+            <div class="stat-head"><span class="stat-ic" aria-hidden="true">☀️</span>UV Index</div>
+            <div class="stat-val"><span id="statUv" class="count-up">0</span></div>
+            <div class="uv-scale"><i id="uvDot"></i></div>
+            <div class="uv-label" id="uvLabel">—</div>
+          </article>
         </div>
-        <div class="temp-block">
-          <span id="temperature" class="temp">—</span>
-          <span class="unit">°C</span>
+
+        <!-- Hourly strip -->
+        <article class="card hourly-card" data-anim="fade-up" style="--i:5">
+          <div class="card-title"><span aria-hidden="true">⏱️</span>Next 24 Hours</div>
+          <div class="hourly-scroll" id="hourlyScroll"></div>
+        </article>
+
+        <!-- Sun arc -->
+        <article class="card sun-card" data-anim="fade-up" style="--i:6">
+          <div class="card-title"><span aria-hidden="true">🌅</span>Sun Path</div>
+          <div class="sun-arc-wrap">
+            <svg viewBox="0 0 320 150" class="sun-arc" aria-label="Sun position from sunrise to sunset">
+              <path d="M20,140 Q160,-20 300,140" class="arc-track" fill="none"/>
+              <path d="M20,140 Q160,-20 300,140" class="arc-fill" id="sunArcFill" fill="none"/>
+              <line x1="10" y1="140" x2="310" y2="140" class="horizon"/>
+              <g id="sunMarker" class="sun-marker">
+                <circle r="9" class="sun-glow"/>
+                <circle r="6" class="sun-core"/>
+              </g>
+            </svg>
+            <div class="sun-times">
+              <div><span class="sun-label">Sunrise</span><span class="sun-val" id="sunrise">—</span></div>
+              <div><span class="sun-label">Sunset</span><span class="sun-val" id="sunset">—</span></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Air quality -->
+        <article class="card aqi-card" data-anim="fade-up" style="--i:7">
+          <div class="card-title"><span aria-hidden="true">🌫️</span>Air Quality</div>
+          <div class="aqi-body">
+            <div class="aqi-main">
+              <span class="aqi-value count-up" id="aqiValue">0</span>
+              <span class="aqi-badge" id="aqiBadge">—</span>
+            </div>
+            <div class="aqi-detail">
+              <div class="aqi-row"><span>PM2.5</span><b><span id="pm25">—</span> µg/m³</b></div>
+              <div class="aqi-row"><span>PM10</span><b><span id="pm10">—</span> µg/m³</b></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- ===== FORECAST ===== -->
+      <section class="page" id="page-forecast" data-route="/forecast" aria-label="Forecast" hidden>
+        <article class="card chart-card" data-anim="fade-up" style="--i:0">
+          <div class="card-title"><span aria-hidden="true">📈</span>7-Day Temperature</div>
+          <svg viewBox="0 0 320 170" class="temp-chart" id="tempChart" aria-label="Temperature line chart"></svg>
+          <div class="chart-legend" id="chartLegend"></div>
+        </article>
+
+        <article class="card chart-card" data-anim="fade-up" style="--i:1">
+          <div class="card-title"><span aria-hidden="true">🌧️</span>Precipitation Chance</div>
+          <div class="precip-bars" id="precipBars"></div>
+        </article>
+
+        <div class="day-list" id="dayList" aria-label="7 day forecast"></div>
+      </section>
+
+      <!-- ===== MAPS / SAVED ===== -->
+      <section class="page" id="page-maps" data-route="/maps" aria-label="Saved locations" hidden>
+        <article class="card saved-head" data-anim="fade-up" style="--i:0">
+          <div>
+            <div class="card-title"><span aria-hidden="true">📍</span>Saved Cities</div>
+            <p class="muted" id="savedCount">No saved cities yet.</p>
+          </div>
+          <button class="btn-primary" id="addCityBtn" aria-label="Add city"><span aria-hidden="true">＋</span> Add</button>
+        </article>
+        <div class="city-grid" id="cityGrid" aria-live="polite"></div>
+      </section>
+
+      <!-- ===== SETTINGS ===== -->
+      <section class="page" id="page-settings" data-route="/settings" aria-label="Settings" hidden>
+        <article class="card settings-card" data-anim="fade-up" style="--i:0">
+          <div class="card-title"><span aria-hidden="true">⚙️</span>Units</div>
+          <div class="setting-row">
+            <label for="tempUnit">Temperature</label>
+            <div class="segmented" id="tempUnit" role="radiogroup" aria-label="Temperature unit">
+              <button class="seg active" data-val="C" role="radio" aria-checked="true">°C</button>
+              <button class="seg" data-val="F" role="radio" aria-checked="false">°F</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <label for="windUnit">Wind speed</label>
+            <div class="segmented" id="windUnit" role="radiogroup" aria-label="Wind unit">
+              <button class="seg active" data-val="kmh" role="radio" aria-checked="true">km/h</button>
+              <button class="seg" data-val="mph" role="radio" aria-checked="false">mph</button>
+            </div>
+          </div>
+          <div class="setting-row">
+            <label for="pressUnit">Pressure</label>
+            <div class="segmented" id="pressUnit" role="radiogroup" aria-label="Pressure unit">
+              <button class="seg active" data-val="hPa" role="radio" aria-checked="true">hPa</button>
+              <button class="seg" data-val="mmHg" role="radio" aria-checked="false">mmHg</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card settings-card" data-anim="fade-up" style="--i:1">
+          <div class="card-title"><span aria-hidden="true">🎨</span>Theme</div>
+          <div class="setting-row">
+            <label for="themePick">Appearance</label>
+            <div class="segmented" id="themePick" role="radiogroup" aria-label="Theme">
+              <button class="seg active" data-val="auto" role="radio" aria-checked="true">Auto</button>
+              <button class="seg" data-val="dark" role="radio" aria-checked="false">Dark</button>
+              <button class="seg" data-val="light" role="radio" aria-checked="false">Light</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card settings-card" data-anim="fade-up" style="--i:2">
+          <div class="card-title"><span aria-hidden="true">ℹ️</span>About</div>
+          <p class="muted">Aurora Weather v2 — a premium glassmorphism weather experience built with pure HTML, CSS &amp; JS. No frameworks, no build step.</p>
+          <p class="muted">Data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (free, no API key).</p>
+          <div class="credit">Made with <span class="heart" aria-hidden="true">♥</span> by Sudais Alam</div>
+        </article>
+
+        <article class="card settings-card" data-anim="fade-up" style="--i:3">
+          <div class="card-title"><span aria-hidden="true">🗂️</span>Data</div>
+          <button class="btn-danger" id="clearCities">Clear saved cities</button>
+        </article>
+      </section>
+
+      <!-- Skeleton loader -->
+      <div class="skeleton-wrap" id="skeletonWrap" hidden>
+        <div class="card hero-card shimmer"><div class="sk-line sk-lg"></div><div class="sk-line sk-xl"></div><div class="sk-line sk-md"></div></div>
+        <div class="stats-grid">
+          <div class="card stat-card shimmer" style="--i:1"><div class="sk-line sk-sm"></div><div class="sk-line sk-md"></div></div>
+          <div class="card stat-card shimmer" style="--i:2"><div class="sk-line sk-sm"></div><div class="sk-line sk-md"></div></div>
+          <div class="card stat-card shimmer" style="--i:3"><div class="sk-line sk-sm"></div><div class="sk-line sk-md"></div></div>
+          <div class="card stat-card shimmer" style="--i:4"><div class="sk-line sk-sm"></div><div class="sk-line sk-md"></div></div>
         </div>
       </div>
+    </main>
 
-      <div class="condition">
-        <span id="weather-icon" class="icon">☁️</span>
-        <p id="description">—</p>
-      </div>
+    <!-- ============ BOTTOM NAV ============ -->
+    <nav class="bottomnav" aria-label="Primary">
+      <div class="nav-indicator" id="navIndicator" aria-hidden="true"></div>
+      <a href="#/" class="nav-item active" data-route="/" aria-label="Home" aria-current="page">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-6h-6v6H5a2 2 0 0 1-2-2z" fill="currentColor"/></svg>
+        <span>Home</span>
+      </a>
+      <a href="#/forecast" class="nav-item" data-route="/forecast" aria-label="Forecast">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-6 4 4 5-7 4 5v5z" fill="currentColor"/><circle cx="7" cy="7" r="2" fill="currentColor"/></svg>
+        <span>Forecast</span>
+      </a>
+      <a href="#/maps" class="nav-item" data-route="/maps" aria-label="Saved">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg>
+        <span>Maps</span>
+      </a>
+      <a href="#/settings" class="nav-item" data-route="/settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9 4l-2-1V9l2-1-1-3-2 .5a7 7 0 0 0-3-3L15 0h-3l-.5 2a7 7 0 0 0-3 3L6 4 5 7l2 1v3l-2 1 1 3 2-.5a7 7 0 0 0 3 3l.5 2h3l.5-2a7 7 0 0 0 3-3l2 .5z" fill="currentColor"/></svg>
+        <span>Settings</span>
+      </a>
+    </nav>
 
-      <div class="details">
-        <div class="detail">
-          <span class="label">Feels like</span>
-          <span id="feels-like">—</span>
-        </div>
-        <div class="detail">
-          <span class="label">Humidity</span>
-          <span id="humidity">—</span>
-        </div>
-        <div class="detail">
-          <span class="label">Wind</span>
-          <span id="wind">—</span>
-        </div>
-        <div class="detail">
-          <span class="label">Pressure</span>
-          <span id="pressure">—</span>
-        </div>
-      </div>
+    <!-- Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-      <div class="forecast" id="forecast"></div>
-    </div>
-
-    <div id="error" class="error hidden" role="alert"></div>
-    <div id="loader" class="loader hidden">Checking the skies…</div>
-
-    <footer>
-      <p>Weather data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></p>
-      <p class="credit">Made with <span class="heart">♥</span> by <strong>Sudais Alam</strong></p>
-    </footer>
+    <!-- Footer credit -->
+    <footer class="footer">Made with <span class="heart" aria-hidden="true">♥</span> by Sudais Alam</footer>
   </div>
 
   <script src="app.js"></script>
