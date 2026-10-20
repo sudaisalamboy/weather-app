@@ -148,3 +148,18 @@ Chrome, Firefox, Safari, Edge — requires JavaScript + `backdrop-filter` suppor
 ## License
 
 MIT — free to use, modify, and distribute.
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `/` | Focus search bar |
+| `Enter` | Search / submit |
+| `Esc` | Close autocomplete dropdown |
+
+## Changelog
+
+- **v1.0** — Initial weather checker (HTML/CSS/JS)
+- **v2.0** — Aurora redesign: glassmorphism, 4 pages, animations
+- **v2.1** — Wind cardinal direction, day length, keyboard shortcut, refresh button
+- **v2.2** — Search input clear fix, preview images
