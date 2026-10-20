@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Checker — by Sudais Alam</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Weather Checker</h1>
+      <p class="subtitle">Real-time weather for any city in the world</p>
+    </header>
+
+    <form id="search-form">
+      <input
+        type="text"
+        id="city-input"
+        placeholder="Search a city (e.g. London, Tokyo, Delhi)…"
+        autocomplete="off"
+        autofocus
+      />
+      <button type="submit" aria-label="Search weather">Search</button>
+    </form>
+
+    <div id="suggestions" class="suggestions hidden"></div>
+
+    <div id="weather-card" class="weather-card hidden" role="status" aria-live="polite">
+      <div class="card-top">
+        <div class="location">
+          <h2 id="city-name">—</h2>
+          <p id="country">—</p>
+        </div>
+        <div class="temp-block">
+          <span id="temperature" class="temp">—</span>
+          <span class="unit">°C</span>
+        </div>
+      </div>
+
+      <div class="condition">
+        <span id="weather-icon" class="icon">☁️</span>
+        <p id="description">—</p>
+      </div>
+
+      <div class="details">
+        <div class="detail">
+          <span class="label">Feels like</span>
+          <span id="feels-like">—</span>
+        </div>
+        <div class="detail">
+          <span class="label">Humidity</span>
+          <span id="humidity">—</span>
+        </div>
+        <div class="detail">
+          <span class="label">Wind</span>
+          <span id="wind">—</span>
+        </div>
+        <div class="detail">
+          <span class="label">Pressure</span>
+          <span id="pressure">—</span>
+        </div>
+      </div>
+
+      <div class="forecast" id="forecast"></div>
+    </div>
+
+    <div id="error" class="error hidden" role="alert"></div>
+    <div id="loader" class="loader hidden">Checking the skies…</div>
+
+    <footer>
+      <p>Weather data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></p>
+      <p class="credit">Made with <span class="heart">♥</span> by <strong>Sudais Alam</strong></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
